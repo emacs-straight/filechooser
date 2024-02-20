@@ -32,15 +32,75 @@ so that the frame filechooser uses appears above tiling windows.
 6. Although `OpenFile` and `SaveFile` methods have been tested by me, `SaveFiles` method is completely untested since I don't know a way to trigger it.
 
 ## Installation
-If despite these limitations you want to test the package:
+If despite these limitations you want to test the package you can use one of the following options:
+
+### Manual Installation
 1. Place `filechooser.el` file in the load path and generate the autoloads file for it.
+
 2. Configure `xdg-desktop-portal` to use Emacs based filechooser. For recent versions this can be done by adding
 ```
 org.freedesktop.impl.portal.FileChooser=emacs
 ```
 to `~/.config/xdg-desktop-portal/portals.conf`. For older versions add your `$XDG_CURRENT_DESKTOP` to the `emacs.portal` file and copy it to `/usr/share/xdg-desktop-portal/portals/`.
+
 3. Copy the `org.gnu.Emacs.FileChooser.service` file `/usr/share/dbus-1/services/`.
+
 4. Restart `xdg-desktop-portal` by using `systemctl --user restart xdg-desktop-portal.service`.
+
+### GNU ELPA
+`filechooser.el` is available on GNU ELPA and can be installed using `M-x package-install`. This will take care of step 1 in the instructions for manual install but the other step will have to be taken manually.
+
+### NixOS
+Here's how to install this package on NixOS.
+
+`configuration.nix:`
+```
+{ pkgs, ... }:
+
+{
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+
+    extraPortals = [
+        # Add any fallback portals here
+        pkgs.xdg-desktop-portal-gtk
+
+        # Won't be needed with more recent xdg-desktop-portal versions
+        (import ./emacs-portal.nix { inherit pkgs; })
+      ];
+      config.common = {
+        default = [ "gtk" ];
+
+        "org.freedesktop.impl.portal.FileChooser" = "emacs";
+    };
+  };
+}
+```
+
+`emacs-portal.nix:`
+```
+{ pkgs }:
+with pkgs;
+
+stdenv.mkDerivation {
+  pname = "Emacs portal";
+  version = "git";
+
+  src = fetchGit {
+      name = "filechooser";
+      url = "https://codeberg.org/rahguzar/filechooser";
+      rev = "866304ab4244865108e12499f6e3be63e4981f92";
+    };
+
+  installPhase = ''
+    mkdir -p $out/share/dbus-1/services/;
+    cp org.gnu.Emacs.FileChooser.service $out/share/dbus-1/services/;
+    mkdir -p $out/share/xdg-desktop-portal/portals/;
+    cp emacs.portal $out/share/xdg-desktop-portal/portals/;
+    '';
+}
+```
 
 ## Usage
 Start an application that uses `xdg-desktop-portal`. An example which is my main use case is to launch `GTK_USE_PORTAL=1 firefox` and initiate a file selection dialogue. Unless you have changed the value of `filechooser-use-popup-frame, a minibuffer only Emacs frame will hopefully appear at this point. You can  select the file (or files depending on the request) by the same means you do usually in minibuffer.
@@ -55,9 +115,9 @@ By default, `filechooser` uses a new frame for presenting the file selection dia
 ### File selection interface
 By default `completing-read` based interfaces are used for all operations. These interfaces are governed by the value of `filechooser-choose-file`, `filechooser-choose-files` and `filechooser-choose-directory`. The value of each of the these variables is a function that is called to do completion, see their doc strings for what is expected from these functions.
 
-The only builtin alternative to default values is `filechooser-dired`. You can use,
+The only builtin alternative to default values is `filechooser-with-dired`. You can use,
 ```emacs-lisp
-(setq filechooser-choose-files 'filechooser-dired)
+(setq filechooser-choose-files #'filechooser-with-dired)
 ```
 to change to a dired based selection for multiple files. In this mode the file chooser frame will have a dired buffer selected. To select files navigate to the desired directory. Mark the files to be selected and press `C-c C-c` to finish. `C-c C-k` aborts the selection process. Filters are available in this mode too and can be changed using `C-f`.
 

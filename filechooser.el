@@ -5,7 +5,7 @@
 ;; Author: rahguzar <rahguzar@zohomail.eu>
 ;; Maintainer: rahguzar <rahguzar@zohomail.eu>
 ;; Created: May 20, 2023
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Keywords: convenience files tools unix
 ;; Homepage: https://codeberg.org/rahguzar/filechooser
 ;; Package-Requires: ((emacs "28.1") (compat "29.1"))
@@ -15,9 +15,7 @@
 ;;; Commentary:
 ;; An implementation of xdg-desktop-portal filechooser in Emacs. This allows
 ;; for choosing files in applications like firefox (with GTK_USE_PORTAL set)
-;; from an Emacs frame. The default is to use `read-file-name' for choosing
-;; a single file and a pair of Dired buffers for choosing multiple files.
-;;
+;; using Emacs.
 ;;
 ;;; Code:
 (require 'compat)
@@ -302,6 +300,10 @@ If MULTIPLE is non-nil `completing-read-multiple' is used."
                     (delq nil (mapcar (lambda (flt) (if (cddr flt) (cadr flt)))
                                       filechooser--filters))
                     dir default)))
+    (when (equal result default)
+      (setq result (expand-file-name default dir)))
+    (when (and default (file-directory-p result))
+      (setq result (expand-file-name default result)))
     (if (or mustmatch (not (file-exists-p result)))
         result
       (filechooser--handle-exisiting-file result dir filters))))
