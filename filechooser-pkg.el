@@ -1,2 +1,0 @@
-;; Generated package description from filechooser.el  -*- no-byte-compile: t -*-
-(define-package "filechooser" "0.2.0.0.20240310.203607" "An xdg-desktop-portal filechooser" '((emacs "28.1") (compat "29.1")) :commit "6ed354db031a3e530954fd9098080b6d96855c64" :authors '(("rahguzar" . "rahguzar@zohomail.eu")) :maintainer '("rahguzar" . "rahguzar@zohomail.eu") :keywords '("convenience" "files" "tools" "unix") :url "https://codeberg.org/rahguzar/filechooser")
