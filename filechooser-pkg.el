@@ -1,2 +1,2 @@
-;; Generated package description from filechooser.el  -*- mode: lisp-data; no-byte-compile: t -*-
-(define-package "filechooser" "0.2.4.0.20250910.151030" "An xdg-desktop-portal filechooser" '((emacs "28.1") (compat "29.1")) :commit "e55c5ea294bbb2c67ab5c51d9489922a83c22456" :authors '(("rahguzar" . "rahguzar@mailbox.org")) :maintainer '("rahguzar" . "rahguzar@mailbox.org") :keywords '("convenience" "files" "tools" "unix") :url "https://codeberg.org/rahguzar/filechooser")
+;; Generated package description from filechooser.el  -*- mode: lisp-data; no-byte-compile: t; lexical-binding:t -*-
+(define-package "filechooser" "0.3.0.0.20260723.0" "An xdg-desktop-portal filechooser" '((emacs "28.1") (compat "29.1")) :commit "a0be6ce512eea8940b325d96fbefba2ada3048ec" :authors '(("rahguzar" . "rahguzar@mailbox.org")) :maintainer '("rahguzar" . "rahguzar@mailbox.org") :keywords '("convenience" "files" "tools" "unix") :url "https://codeberg.org/rahguzar/filechooser")
